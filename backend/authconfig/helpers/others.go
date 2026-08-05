@@ -15,6 +15,8 @@ func InitEnv() {
 	}
 }
 
-func getEnv(key string) string {
+// GetEnv returns the value of the environment variable named by key.
+// Exported so callers outside this package (e.g. main) can use it.
+func GetEnv(key string) string {
 	return os.Getenv(key)
 }
