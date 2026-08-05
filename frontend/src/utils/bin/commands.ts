@@ -1,7 +1,6 @@
 // List of commands that do not require API calls
 
 import * as bin from './index';
-import config from '../../../config.json';
 
 // Help
 export const help = async (args: string[]): Promise<string> => {
