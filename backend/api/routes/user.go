@@ -26,8 +26,8 @@ func getUserById(w http.ResponseWriter, r *http.Request) {
 	userId, err := primitive.ObjectIDFromHex(chi.URLParam(r, "id"))
 
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Invalid id!"))
-		w.WriteHeader(400)
 		return
 	}
 
@@ -44,8 +44,8 @@ func getUserById(w http.ResponseWriter, r *http.Request) {
 	err = collection.FindOne(context.TODO(), filter, opts).Decode(&result)
 
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("User with given id not found!"))
-		w.WriteHeader(400)
 		return
 	}
 	fmt.Println(result)
@@ -68,8 +68,8 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&data)
 
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Invalid Request!"))
-		w.WriteHeader(400)
 		return
 	}
 
@@ -86,8 +86,8 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
 	err = collection.FindOne(context.TODO(), filter, opts).Decode(&result)
 
 	if err == nil {
+		w.WriteHeader(http.StatusConflict)
 		w.Write([]byte("User with given username already exists!"))
-		w.WriteHeader(500)
 		return
 	}
 
@@ -101,11 +101,12 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
 	_, err = collection.InsertOne(context.TODO(), newUser)
 
 	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Something went wrong!"))
-		w.WriteHeader(500)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("User successfully created!"))
 }
